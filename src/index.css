@@ -27,3 +27,9 @@
   display: inline-block;
   margin: 0 2px;
 }
+
+.chat-container {
+  max-width: 600px; /* Adjust based on design */
+  width: 90%; /* Ensures responsiveness */
+  margin: auto;
+}

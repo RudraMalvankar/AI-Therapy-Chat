@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Message, ChatState, SYSTEM_PROMPT } from './types';
 import { ChatMessage } from './components/ChatMessage';
-import { VoiceInput } from './components/VoiceInput';
+// import { VoiceInput } from './components/VoiceInput';
 import { Send, Volume2, VolumeX, Sparkles } from 'lucide-react';
 
 // Initialize the Gemini API with the correct endpoint and API key
@@ -100,80 +100,87 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-blue-50 to-cyan-100">
-      <div className="max-w-4xl mx-auto p-4 h-screen flex flex-col">
-        <header className="text-center py-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Sparkles className="text-purple-600" size={28} />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
-              AI Therapy Chat
-            </h1>
-          </div>
-          <p className="text-gray-600 mt-2 text-lg">Your safe space to talk and reflect</p>
-        </header>
+    <div className="min-h-screen bg-gradient-to-br from-purple-200 via-blue-90 to-cyan-100 flex flex-col">
+  <div className="w-full max-w-xl lg:max-w-3xl xl:max-w-4xl mx-auto p-4 flex-1 flex flex-col min-h-screen">
 
-        <div className="flex-1 overflow-y-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-4">
-          {chatState.messages.filter(msg => msg.role !== 'system').length === 0 && (
-            <div className="text-center text-gray-500 py-8">
-              <p className="text-lg mb-2">👋 Welcome! How are you feeling today?</p>
-              <p className="text-sm">Start typing or use voice input to begin your conversation.</p>
-            </div>
-          )}
-          {chatState.messages
-            .filter(msg => msg.role !== 'system')
-            .map((message, index) => (
-              <ChatMessage key={index} message={message} />
-            ))}
-          {chatState.isLoading && (
-            <div className="flex items-center gap-2 p-4 text-purple-600">
-              <div className="typing-indicator">
-                <span>•</span>
-                <span>•</span>
-                <span>•</span>
-              </div>
-              <span className="text-sm">Thinking...</span>
-            </div>
-          )}
-          {chatState.error && (
-            <div className="text-red-500 text-center p-4 bg-red-50 rounded-lg">
-              {chatState.error}
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+    <header className="text-center py-4">
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <Sparkles className="text-purple-600" size={24} />
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
+          AI Therapy Chat
+        </h1>
+      </div>
+      <p className="text-gray-600 mt-1 text-base">Your safe space to talk and reflect</p>
+    </header>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4">
-          <div className="flex items-center gap-3">
-            <VoiceInput onVoiceInput={handleSubmit} />
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSubmit(input)}
-              placeholder="Type your message here..."
-              className="flex-1 p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/50 backdrop-blur-sm transition-all duration-300"
-            />
-            <button
-              onClick={() => handleSubmit(input)}
-              disabled={!input.trim()}
-              className="p-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
-            >
-              <Send size={24} />
-            </button>
-            <button
-              onClick={isSpeaking ? stopSpeaking : () => speak(chatState.messages[chatState.messages.length - 1]?.content)}
-              className={`p-3 rounded-xl transition-all duration-300 transform hover:scale-105 ${
-                isSpeaking 
-                  ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' 
-                  : 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300'
-              }`}
-            >
-              {isSpeaking ? <VolumeX size={24} /> : <Volume2 size={24} />}
-            </button>
-          </div>
+    <div className="flex-1 overflow-y-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 mb-4 max-h-[65vh]">
+      {chatState.messages.filter(msg => msg.role !== 'system').length === 0 && (
+        <div className="text-center text-gray-500 py-6">
+          <p className="text-lg mb-2">Hey there! 😊 What's on your mind today?</p>
+          <p className="text-sm">Feel free to share your thoughts—I'm here to listen and help!</p>
         </div>
+      )}
+      {chatState.messages
+        .filter(msg => msg.role !== 'system')
+        .map((message, index) => (
+          <ChatMessage key={index} message={message} />
+        ))}
+      <div ref={messagesEndRef} />
+    </div>
+
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-3">
+      <div className="flex items-center gap-2 w-full">
+        <button 
+          onClick={isSpeaking ? stopSpeaking : () => speak(chatState.messages[chatState.messages.length - 1]?.content)}
+          className={`p-2 rounded-xl transition-all duration-300 transform hover:scale-105 ${
+            isSpeaking 
+              ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' 
+              : 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300'
+          }`}
+        >
+          {isSpeaking ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        </button>
+
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleSubmit(input)}
+          placeholder="Type your message..."
+          className="flex-1 p-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/50 backdrop-blur-sm transition-all duration-300"
+        />
+
+        {/* <VoiceInput onVoiceInput={handleSubmit} className="hidden sm:block" />  Voice chat now visible on desktop */}
+
+        <button
+          onClick={() => handleSubmit(input)}
+          disabled={!input.trim()}
+          className="p-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
+        >
+          <Send size={20} />
+        </button>
       </div>
     </div>
+  </div>
+
+  <footer className="text-center py-2 text-sm text-gray-500">
+  <p className="mb-1">
+    © {new Date().getFullYear()} All rights reserved by 
+    <a 
+      href="https://www.linkedin.com/in/rudra-malvankar/" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="text-blue-600 hover:underline ml-1"
+    >
+      Rudra Malvankar
+    </a>
+  </p>
+  <p className="text-xs text-gray-400">Version 0 (V0) - Production</p>
+</footer>
+
+</div>
+
+
   );
 }
 

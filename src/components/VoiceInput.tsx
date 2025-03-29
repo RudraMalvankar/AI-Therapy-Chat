@@ -6,7 +6,7 @@ interface VoiceInputProps {
   onVoiceInput: (text: string) => void;
 }
 
-export const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput }) => {
+export const VoiceInput: React.FC<VoiceInputProps> = ({ onVoiceInput,  }) => {
   const [isListening, setIsListening] = useState(false);
   const { transcript, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
 
